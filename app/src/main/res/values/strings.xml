@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DemoDeviceDiscovery</string>
+    <string name="btn_register">Register</string>
+</resources>
