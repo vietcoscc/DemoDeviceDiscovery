@@ -18,36 +18,36 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static String SERVER_SERVICE_NAME = "Server";
-    public static String SERVER_SERVICE_TYPE = "_http._tcp.";
+    public static final String SERVER_SERVICE_TYPE = "_http._tcp.";
     public static final int SERVER_PORT = 8000;
 
     public static String CLIENT_SERVICE_NAME = "Client";
     public static String CLIENT_SERVICE_TYPE = "_http._tcp.";
-    private NsdManager nsdManager;
-    private Button btnRegister;
-    private int count = 0;
-    private RecyclerView recyclerView;
-    private ArrayList<NetworkInfo> arrNetworkInfo = new ArrayList<>();
-    private NetworkInfoRecyclerViewAdapter adapter;
+    private NsdManager mNsdManager;
+    private Button mBtnRegister;
+    private int mCount = 0;
+    private RecyclerView mRecyclerView;
+    private ArrayList<NetworkInfo> mArrNetworkInfo = new ArrayList<>();
+    private NetworkInfoRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        nsdManager = (NsdManager) getSystemService(NSD_SERVICE);
+        mNsdManager = (NsdManager) getSystemService(NSD_SERVICE);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapter = new NetworkInfoRecyclerViewAdapter(arrNetworkInfo);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        mAdapter = new NetworkInfoRecyclerViewAdapter(mArrNetworkInfo);
+        mRecyclerView.setAdapter(mAdapter);
 
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        mBtnRegister = (Button) findViewById(R.id.btnRegister);
+        mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                registerService(SERVER_PORT + count);
-                count++;
+                registerService(SERVER_PORT + mCount);
+                mCount++;
             }
         });
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         serviceInfo.setPort(port);
         serviceInfo.setServiceName(SERVER_SERVICE_NAME);
         serviceInfo.setServiceType(SERVER_SERVICE_TYPE);
-        nsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener);
+        mNsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener);
     }
 
     private NsdManager.RegistrationListener registrationListener = new NsdManager.RegistrationListener() {
@@ -93,10 +93,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceResolved(NsdServiceInfo nsdServiceInfo) {
             Log.i(TAG, "onServiceResolved");
-             NetworkInfo networkInfo = new NetworkInfo(nsdServiceInfo.getServiceName(),
+            NetworkInfo networkInfo = new NetworkInfo(nsdServiceInfo.getServiceName(),
                     nsdServiceInfo.getHost().getHostName(),
                     nsdServiceInfo.getPort() + "");
-            arrNetworkInfo.add(networkInfo);
+            mArrNetworkInfo.add(networkInfo);
             new Thread() {
                 @Override
                 public void run() {
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new TimerTask() {
                         @Override
                         public void run() {
-                            adapter.notifyDataSetChanged();
+                            mAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "onServiceFound Diff Machine", Toast.LENGTH_SHORT).show();
 
             }
-            nsdManager.resolveService(nsdServiceInfo, resolveListener);
+            mNsdManager.resolveService(nsdServiceInfo, resolveListener);
         }
 
         @Override
@@ -158,10 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        if (nsdManager != null) {
-            nsdManager.unregisterService(registrationListener);
+        if (mNsdManager != null) {
+            mNsdManager.unregisterService(registrationListener);
             try {
-                nsdManager.stopServiceDiscovery(discoveryListener);
+                mNsdManager.stopServiceDiscovery(discoveryListener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -171,19 +171,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if (nsdManager != null) {
+        if (mNsdManager != null) {
 //            registerService(SERVER_PORT);
-            nsdManager.discoverServices(SERVER_SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+            mNsdManager.discoverServices(SERVER_SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
         }
         super.onResume();
     }
 
     @Override
     protected void onDestroy() {
-        if (nsdManager != null) {
-            nsdManager.unregisterService(registrationListener);
+        if (mNsdManager != null) {
+            mNsdManager.unregisterService(registrationListener);
             try {
-                nsdManager.stopServiceDiscovery(discoveryListener);
+                mNsdManager.stopServiceDiscovery(discoveryListener);
             } catch (Exception e) {
                 e.printStackTrace();
             }

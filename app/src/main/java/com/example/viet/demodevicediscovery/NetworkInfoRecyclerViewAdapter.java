@@ -13,10 +13,10 @@ import java.util.ArrayList;
  */
 
 public class NetworkInfoRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<NetworkInfo> arrNetworkInfo;
+    private ArrayList<NetworkInfo> mArrNetworkInfo;
 
     public NetworkInfoRecyclerViewAdapter(ArrayList<NetworkInfo> arrNetworkInfo) {
-        this.arrNetworkInfo = arrNetworkInfo;
+        this.mArrNetworkInfo = arrNetworkInfo;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class NetworkInfoRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         NetworkViewHolder networkViewHolder = (NetworkViewHolder) holder;
-        NetworkInfo networkInfo = arrNetworkInfo.get(position);
+        NetworkInfo networkInfo = mArrNetworkInfo.get(position);
         networkViewHolder.tvName.setText(networkInfo.getName());
         networkViewHolder.tvHost.setText(networkInfo.getHost());
         networkViewHolder.tvPort.setText(networkInfo.getPort());
@@ -36,7 +36,7 @@ public class NetworkInfoRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
 
     @Override
     public int getItemCount() {
-        return arrNetworkInfo.size();
+        return mArrNetworkInfo.size();
     }
 
     class NetworkViewHolder extends RecyclerView.ViewHolder {
